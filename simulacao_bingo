@@ -1,0 +1,331 @@
+algoritmo simulacao_bingo;
+// Síntese
+//  Objetivo: Esse algoritimo tem o objetivo de simular um jogo de bingo de uma cartela
+//  Entrada : Se o jogador deseja uma cartela aleatória ou desenja monta-la. Caso decida monta-la, o jogador escolhera 25 numeros diferentes entre 1 e 99
+//  Saída   : Será apresentado a cartela de bingo definida, os numeros sorteados, as marcações na cartela e uma mensagem de finalização
+
+
+principal
+	// Declarações
+	inteiro n, b[5][5], B[25], n_sort_cart[99], n_sort[99], x, x1, i, i1, j, j1, j2, repetir, verif_cart;
+	logico v, q, sort, sorteio_bola, verif_rep, verif_rep_cart;
+	caracter c, C[5][5], X[25], escolher;
+	// Instruções
+	x = 0;
+	i = 0;
+	i1 = 0;
+	j1 = 0;
+	j2 = 0;
+	v = verdadeiro;
+	q = verdadeiro;
+	escreval("================= JOGO DE BINGO =================");
+	escreval("");
+	leiaCaracter(c);
+	escreval("Você deseja escolher os numeros da cartela ou deseja uma cartela aleatória?");
+	escreval("");
+	escreval("");
+	escreval("	=> Digite '0' para montar a sua cartela.");
+	escreval("	=> Digite '1' para obter uma cartela aleatória.");
+	escreval("");
+	leiaCaracter(escolher);
+	escreval("");
+	escreval("======================//==========================");
+	escreval("");
+	para(i de 0 ate 4 passo 1)faca
+		para(j de 0 ate 4 passo 1)faca
+			b[i][j] = 0;
+			C[i][j] = 'O';
+		fimPara
+	fimPara
+
+	// Se o jogador quiser montar a cartela //
+	
+	se(escolher == '0')entao
+		escreval("Digite um numero de 1 a 99 (Sem repetir):");
+		para(i de 0 ate 4 passo 1)faca
+			para(j de 0 ate 4 passo 1)faca
+				leia(n);
+				b[i][j] = n;
+				n_sort_cart[j2] = n;
+				verif_rep_cart = impedir_repete_cartela(n_sort_cart,n,j2);
+				se(verif_rep_cart == falso)entao
+					v = falso;
+				fimSe
+				B[x] = b[i][j];
+				X[x] = C[i][j];
+				x = x + 1;
+				j2 = j2 + 1;
+			fimPara
+		fimPara
+		escreval("");
+		escreval("======================//==========================");
+	fimSe
+	
+	// Se o jogador quiser uma cartela aleatória //
+	
+	se(escolher == '1')entao
+		para(i de 0 ate 4 passo 1)faca
+			para(j de 0 ate 4 passo 1)faca
+				n = aleatorio(98)+1;
+				b[i][j] = n;
+				n_sort_cart[j2] = n;
+				verif_rep_cart = impedir_repete_cartela(n_sort_cart,n,j2);
+				se(verif_rep_cart == falso)entao
+					enquanto(verif_rep_cart == falso)faca
+						n = aleatorio(98)+1;
+						b[i][j] = n;
+						n_sort_cart[j2] = n;
+						verif_rep_cart = impedir_repete_cartela(n_sort_cart,n,j2);
+					fimEnquanto
+				fimSe
+				B[x] = b[i][j];
+				X[x] = C[i][j];
+				x = x + 1;
+				j2 = j2 + 1;
+			fimPara
+		fimPara
+	fimSe
+
+	// Se o jogador não escolher nem 0 nem 1 //
+
+	se(escolher != '0' e escolher != '1')entao
+		q = falso;
+		escreval("O valor inserido não é valido.");
+	fimSe	
+
+	// Verifica se os números da cartela estão entre 1 e 99 //
+
+	para(i de 0 ate 4 passo 1)faca
+		para(j de 0 ate 4 passo 1)faca
+			verif_cart = b[i][j];
+			se(b[i][j] < 1 ou b[i][j] > 99)entao
+				v = falso;
+			fimSe
+		fimPara
+	fimPara
+
+	// Apresenta a cartela se for valida, caso contrario, o jogo não ocorre
+	se(q == verdadeiro)entao
+		se(v == verdadeiro)entao
+			escreval("Esta e a sua cartela:");
+			escreval("");
+			escreval(b[0][0], " ", b[0][1], " ", b[0][2], " ", b[0][3], " ", b[0][4]);
+			escreval(b[1][0], " ", b[1][1], " ", b[1][2], " ", b[1][3], " ", b[1][4]);
+			escreval(b[2][0], " ", b[2][1], " ", b[2][2], " ", b[2][3], " ", b[2][4]);
+			escreval(b[3][0], " ", b[3][1], " ", b[3][2], " ", b[3][3], " ", b[3][4]);
+			escreval(b[4][0], " ", b[4][1], " ", b[4][2], " ", b[4][3], " ", b[4][4]);
+		senao
+			escreval("Os numeros selecionados não atendem os requisitos");
+		fimSe
+
+		leiaCaracter(c);
+
+		// As bolas serão sorteadas e marcadas na cartela//
+
+		se(v == verdadeiro)entao
+			escreval("======================//==========================");
+			escreval("");
+			escreval("Agora os numeros serao sorteados!");
+			escreval("");
+			escreval("======================//==========================");
+			leiaCaracter(c);
+
+			// Sortear bolas ate o valor ser atingido //
+
+			sorteio_bola = falso;
+			enquanto(sorteio_bola == falso)faca
+				escreval("Sorteando...");
+				x1 = aleatorio(98)+1;
+				n_sort[i1] = x1;
+				i1 = i1 + 1;
+				leiaCaracter(c);
+				verif_rep = impedir_repete(n_sort,x1,j1);
+
+				//Se o numero sorteado repetir//
+
+				se(verif_rep == falso)entao
+					enquanto(verif_rep == falso)faca
+						x1 = aleatorio(98)+1;
+						n_sort[j1] = x1;
+						verif_rep = impedir_repete(n_sort,x1,j1);
+					fimEnquanto
+					escreval("O numero sorteado foi: ", x1);
+					leiaCaracter(c);
+
+					sort = sorteio(B,x1);
+					se(sort == falso)entao
+						escreval("Esse numero não esta em sua cartela");
+						escreval("");
+						escreval("======================//==========================");
+					fimSe
+
+					se(sort == verdadeiro)entao
+						x = 0;
+						para(i de 0 ate 4 passo 1)faca
+							para(j de 0 ate 4 passo 1)faca
+								x = x + 1;
+								se(b[i][j] == x1)entao
+									C[i][j] = 'X';
+
+									X[x-1] = C[i][j];
+									x = 0;
+								fimSe
+							fimPara
+						fimPara
+						escreval(C[0][0], " ", C[0][1], " ", C[0][2], " ", C[0][3], " ", C[0][4]);
+						escreval(C[1][0], " ", C[1][1], " ", C[1][2], " ", C[1][3], " ", C[1][4]);
+						escreval(C[2][0], " ", C[2][1], " ", C[2][2], " ", C[2][3], " ", C[2][4]);
+						escreval(C[3][0], " ", C[3][1], " ", C[3][2], " ", C[3][3], " ", C[3][4]);
+						escreval(C[4][0], " ", C[4][1], " ", C[4][2], " ", C[4][3], " ", C[4][4]);
+						escreval("");
+						escreval("======================//==========================");
+					fimSe
+				senao
+
+					// Se o numero sorteado não repetir //
+
+					escreval("O numero sorteado foi: ", x1);
+					leiaCaracter(c);
+
+					sort = sorteio(B,x1);
+					se(sort == falso)entao
+						escreval("Esse numero não esta em sua cartela");
+						escreval("");
+						escreval("======================//==========================");
+					fimSe
+
+					se(sort == verdadeiro)entao
+						x = 0;
+						para(i de 0 ate 4 passo 1)faca
+							para(j de 0 ate 4 passo 1)faca
+								x = x + 1;
+								se(b[i][j] == x1)entao
+									C[i][j] = 'X';
+
+									X[x-1] = C[i][j];
+									x = 0;
+								fimSe
+							fimPara
+						fimPara
+						escreval(C[0][0], " ", C[0][1], " ", C[0][2], " ", C[0][3], " ", C[0][4]);
+						escreval(C[1][0], " ", C[1][1], " ", C[1][2], " ", C[1][3], " ", C[1][4]);
+						escreval(C[2][0], " ", C[2][1], " ", C[2][2], " ", C[2][3], " ", C[2][4]);
+						escreval(C[3][0], " ", C[3][1], " ", C[3][2], " ", C[3][3], " ", C[3][4]);
+						escreval(C[4][0], " ", C[4][1], " ", C[4][2], " ", C[4][3], " ", C[4][4]);
+						escreval("");
+						escreval("======================//==========================");
+					fimSe
+				fimSe
+				j1 = j1 + 1;
+
+				// Identificar se deu bingo //
+
+				//Linhas//
+
+				se(C[0][0] == 'X' e C[0][1] == 'X' e C[0][2] == 'X' e C[0][3] == 'X' e C[0][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[1][0] == 'X' e C[1][1] == 'X' e C[1][2] == 'X' e C[1][3] == 'X' e C[1][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[2][0] == 'X' e C[2][1] == 'X' e C[2][2] == 'X' e C[2][3] == 'X' e C[2][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[3][0] == 'X' e C[3][1] == 'X' e C[3][2] == 'X' e C[3][3] == 'X' e C[3][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[4][0] == 'X' e C[4][1] == 'X' e C[4][2] == 'X' e C[4][3] == 'X' e C[4][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+
+				//Colunas//	
+
+				se(C[0][0] == 'X' e C[1][0] == 'X' e C[2][0] == 'X' e C[3][0] == 'X' e C[4][0] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[0][1] == 'X' e C[1][1] == 'X' e C[2][1] == 'X' e C[3][1] == 'X' e C[4][1] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[0][2] == 'X' e C[1][2] == 'X' e C[2][2] == 'X' e C[3][2] == 'X' e C[4][2] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[0][3] == 'X' e C[1][3] == 'X' e C[2][3] == 'X' e C[3][3] == 'X' e C[4][3] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[0][4] == 'X' e C[1][4] == 'X' e C[2][4] == 'X' e C[3][4] == 'X' e C[4][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+
+				//Diagonais//
+
+				se(C[0][0] == 'X' e C[1][1] == 'X' e C[2][2] == 'X' e C[3][3] == 'X' e C[4][4] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+				se(C[0][4] == 'X' e C[1][3] == 'X' e C[2][2] == 'X' e C[3][1] == 'X' e C[4][0] == 'X')entao
+					sorteio_bola = verdadeiro;
+				fimSe
+			fimEnquanto	
+
+			//Fim do jogo//
+
+			escreval("PARABENS!!");
+			escreval("O SEU JOGO DEU BINGO");
+			escreval("======================//==========================");
+		fimSe
+	fimSe
+fimPrincipal
+
+// Função que verifica se são compativeis //
+
+funcao logico sorteio (inteiro B[], inteiro x1)
+	//Declarações
+	inteiro i, j, x;
+	logico resultado;
+	//Instruções
+	resultado = falso;
+	para(i de 0 ate 24 passo 1)faca
+		se(B[i] == x1)entao
+			resultado = verdadeiro;
+		fimSe
+	fimPara
+
+	retorna resultado;
+fimFuncao
+
+// Função que verifica se o numero sorteado é repetido //
+
+funcao logico impedir_repete (inteiro n_sort[], inteiro x1, inteiro j1)
+	//Declarações
+	inteiro i, j, x, X[99];
+	logico resultado;
+	//Instruções
+	x = 0;
+	resultado = verdadeiro;
+	se(j1 != 0)entao
+		para(x de 0 ate j1-1 passo 1)faca
+			se(x1 == n_sort[x])entao
+				resultado = falso;
+			fimSe
+		fimPara
+	fimSe
+	retorna resultado;
+fimFuncao				
+
+// Função que verifica se o numero sorteado NA CARTELA é repetido //
+
+funcao logico impedir_repete_cartela (inteiro n_sort_cart[], inteiro n, inteiro j2)
+	//Declarações
+	inteiro i, j, x, X[99];
+	logico resultado;
+	//Instruções
+	x = 0;
+	resultado = verdadeiro;
+	se(j2 != 0)entao
+		para(x de 0 ate j2-1 passo 1)faca
+			se(n == n_sort_cart[x])entao
+				resultado = falso;
+			fimSe
+		fimPara
+	fimSe
+	retorna resultado;
+fimFuncao		
